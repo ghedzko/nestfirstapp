@@ -1,0 +1,14 @@
+@host=http://localhost:3000
+
+GET {{host}}/tasks
+Content-Type: application/json
+
+###
+
+POST {{host}}/tasks
+Content-Type: application/json
+
+{
+     "title": "Do lalala",
+      "description":"Lorem ipsum dolor ",
+}
