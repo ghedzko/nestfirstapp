@@ -7,15 +7,7 @@ import {
 } from 'class-validator';
 import { TaskStatus } from '../task.entity';
 
-export class CreateTaskDto {
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(1)
-  title: string;
-  @IsString()
-  description: string;
-}
-export class UpdateTaskDto {
+class TaskDto {
   @IsString()
   @IsOptional()
   title?: string;
@@ -23,7 +15,16 @@ export class UpdateTaskDto {
   @IsString()
   @IsOptional()
   description?: string;
+}
 
+export class CreateTaskDto extends TaskDto {
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(1)
+  title: string;
+}
+
+export class UpdateTaskDto extends TaskDto {
   @IsString()
   @IsOptional()
   @IsIn([TaskStatus.PENDING, TaskStatus.IN_PROGRESS, TaskStatus.DONE])
