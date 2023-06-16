@@ -6,11 +6,14 @@ import {
   Param,
   Patch,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto, UpdateTaskDto } from './dto/task.dto';
+import { LoggingInterceptor } from './interceptors/logging.interceptor';
 
 @Controller('tasks')
+@UseInterceptors(LoggingInterceptor)
 export class TasksController {
   constructor(private tasksService: TasksService) {}
   @Get()
