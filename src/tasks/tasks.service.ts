@@ -1,4 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Task, TaskStatus } from './task.entity';
 import { UpdateTaskDto } from './dto/task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,9 +20,12 @@ export class TasksService {
     return this.taskRepository.find();
     // return this.taskRepository;
   }
-  getTaskById(id: string) {
-    return this.taskRepository.findOne({ where: { id } });
-    // return this.tasks.find((task) => task.id === id);
+  async getTaskById(id: string) {
+    const task = await this.taskRepository.findOne({ where: { id } });
+    if (!task) {
+      throw new HttpException('Resource not found', HttpStatus.NOT_FOUND);
+    }
+    return task;
   }
 
   async updateTask(
@@ -36,6 +45,9 @@ export class TasksService {
   }
 
   createTask(title: string, description: string) {
+    if (!title || !description) {
+      throw new BadRequestException('Title and description must not be empty');
+    }
     const newTask = {
       title,
       description,
