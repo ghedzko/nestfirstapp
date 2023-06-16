@@ -1,66 +1,52 @@
 import { Injectable } from '@nestjs/common';
 import { Task, TaskStatus } from './task.entity';
-import { v4 } from 'uuid';
 import { UpdateTaskDto } from './dto/task.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TasksService {
-  private tasks: Task[] = [
-    {
-      id: '1',
-      title: 'Do homework',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla euismod, nisl vitae aliquam ultricies, nunc nisl aliquet nunc, vita',
-      status: TaskStatus.IN_PROGRESS,
-    },
-    {
-      id: '2',
-      title: 'Do Something',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla euismod, nisl vitae aliquam ultricies, nunc nisl aliquet nunc, vita',
-      status: TaskStatus.IN_PROGRESS,
-    },
-  ];
+  constructor(
+    @InjectRepository(Task) private taskRepository: Repository<Task>,
+  ) {}
 
   getAllTasks() {
-    return this.tasks;
+    return this.taskRepository.find();
+    // return this.taskRepository;
   }
-  getTaskById(id: string): Task | null {
-    return this.tasks.find((task) => task.id === id);
+  getTaskById(id: string) {
+    return this.taskRepository.findOne({ where: { id } });
+    // return this.tasks.find((task) => task.id === id);
   }
 
-  updateTask(id: string, updatedFields: UpdateTaskDto): Task | string {
-    const task = this.getTaskById(id);
+  async updateTask(
+    id: string,
+    updatedFields: UpdateTaskDto,
+  ): Promise<Task | string> {
+    const task = await this.taskRepository.findOne({ where: { id } });
+
     if (task) {
-      const updatedTask = Object.assign(task, updatedFields);
-      this.tasks = this.tasks.map((task) =>
-        task.id === id ? updatedTask : task,
-      );
-      return updatedTask;
+      Object.assign(task, updatedFields);
+      await this.taskRepository.save(task);
+
+      return task;
     }
+
     return 'No task found';
   }
+
   createTask(title: string, description: string) {
-    const newTask: Task = {
-      id: v4(),
+    const newTask = {
       title,
       description,
       status: TaskStatus.PENDING,
     };
-    this.tasks.push(newTask);
-    return newTask;
+
+    // this.tasks.push(newTask);
+    return this.taskRepository.save(newTask);
   }
 
-  deleteTask(id: string): Task | null {
-    const taskIndex = this.tasks.findIndex((task) => task.id === id);
-    let deletedTask: Task | null = null;
-
-    if (taskIndex !== -1) {
-      deletedTask = this.tasks[taskIndex];
-
-      this.tasks.splice(taskIndex, 1);
-    }
-
-    return deletedTask;
+  deleteTask(id: string) {
+    return this.taskRepository.delete(id);
   }
 }
