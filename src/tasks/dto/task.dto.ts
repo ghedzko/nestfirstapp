@@ -27,6 +27,6 @@ export class CreateTaskDto extends TaskDto {
 export class UpdateTaskDto extends TaskDto {
   @IsString()
   @IsOptional()
-  @IsIn([TaskStatus.PENDING, TaskStatus.IN_PROGRESS, TaskStatus.DONE])
+  @IsIn([Object.values(TaskStatus)])
   status?: TaskStatus;
 }
