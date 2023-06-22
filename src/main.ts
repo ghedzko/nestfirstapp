@@ -13,7 +13,7 @@ async function bootstrap() {
     transport: Transport.RMQ,
     options: {
       urls: ['amqp://guest:guest@127.0.0.1:5672'], // La URL de tu servidor RabbitMQ
-      queue: 'tasks_queue', // El nombre de tu cola en RabbitMQ
+      queue: 'tasks_queue',
       queueOptions: {
         durable: false,
       },
