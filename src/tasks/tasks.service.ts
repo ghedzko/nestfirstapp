@@ -3,7 +3,6 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { Task, TaskStatus } from './task.entity';
 import { UpdateTaskDto } from './dto/task.dto';
